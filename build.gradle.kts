@@ -33,13 +33,15 @@ subprojects {
         dependencies {
             dependency("org.springdoc:springdoc-openapi-starter-webflux-ui:2.6.0")
             dependency("io.asyncer:r2dbc-mysql:1.0.2")
+            dependency("com.squareup.okhttp3:mockwebserver:4.12.0")
         }
     }
 
     dependencies {
-        compileOnly("org.projectlombok:lombok")
-        annotationProcessor("org.projectlombok:lombok")
-        testImplementation("org.springframework.boot:spring-boot-starter-test")
+        "compileOnly"("org.projectlombok:lombok")
+        "annotationProcessor"("org.projectlombok:lombok")
+        "testImplementation"("org.springframework.boot:spring-boot-starter-test")
+        "testRuntimeOnly"("org.junit.platform:junit-platform-launcher")
         testImplementation("io.projectreactor:reactor-test")
     }
 

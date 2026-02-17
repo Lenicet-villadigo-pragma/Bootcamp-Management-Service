@@ -33,5 +33,16 @@ springdoc:
 # Configuración de logging para R2DBC, borrar una vez usado
 logging:
   level:
+    root: INFO # borrar
+    org.springframework.web.reactive.function.client: DEBUG # borrar
+    org.springframework.http.server.reactive: DEBUG
     io.r2dbc.pool: DEBUG
     org.springframework.r2dbc: DEBUG
+    org.springframework.web.reactive.function.client.WebClient: DEBUG
+
+parameterized:
+  services:
+    skill:
+      base-url: http://localhost:8080/skills
+  flag:
+    webclient-builder-debug: true
