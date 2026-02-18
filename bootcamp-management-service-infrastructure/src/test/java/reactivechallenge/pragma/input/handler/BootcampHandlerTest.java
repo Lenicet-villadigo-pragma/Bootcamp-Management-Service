@@ -10,8 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactivechallenge.pragma.api.IRegisterBootcampServicePort;
+import reactivechallenge.pragma.api.IRetrieveBootcampServicePort;
 import reactivechallenge.pragma.input.dto.CreateBootcampRequestDto;
 import reactivechallenge.pragma.model.BootcampModel;
+import reactivechallenge.pragma.spi.ISkillServicePort;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -27,12 +29,17 @@ import static org.mockito.Mockito.mock;
 class BootcampHandlerTest {
     @Mock
     IRegisterBootcampServicePort registerBootcampServicePortMock;
+    @Mock
+    IRetrieveBootcampServicePort retrieveBootcampServicePortMock;
+    @Mock
+  ISkillServicePort skillServicePortMock;
 
     private BootcampHandler bootcampHandler;
 
     @BeforeEach
     void setUp() {
-        bootcampHandler = new BootcampHandler(registerBootcampServicePortMock);
+        bootcampHandler = new BootcampHandler(registerBootcampServicePortMock, retrieveBootcampServicePortMock,
+                skillServicePortMock,0,10);
     }
 
     @Test

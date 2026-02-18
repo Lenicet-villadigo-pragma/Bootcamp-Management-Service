@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactivechallenge.pragma.exception.InconsistencyDataException;
+import reactivechallenge.pragma.model.SkillExternalModel;
 import reactivechallenge.pragma.spi.ISkillServicePort;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
@@ -45,5 +47,25 @@ public class SkillServiceAdapter implements ISkillServicePort {
                                 String.format("Error al verificar la existencia de las capacidades con ids %s, mensaje: %s"
                                         , skillsIdsAsString, e.getMessage())))
                 );
+    }
+
+    @Override
+    public Flux<SkillExternalModel> getSkillsByIds(List<String> skillIds) {
+        String skillIdsAsString = String.join(", ", skillIds);
+
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/getByIds")
+                        .queryParam("skillIds", skillIdsAsString)
+                        .build())
+                .retrieve()
+                .bodyToFlux(SkillExternalModel.class)
+                .timeout(Duration.ofSeconds(6))
+                .onErrorResume(e -> {
+                    log.error("Error al obtener la lista de las capacidades con ids {}: {}. retornando flujo vacío"
+                            , skillIdsAsString, e.getMessage());
+
+                    return  Flux.empty();
+                });
     }
 }

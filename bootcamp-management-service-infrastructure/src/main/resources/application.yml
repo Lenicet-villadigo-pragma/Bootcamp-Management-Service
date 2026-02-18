@@ -46,3 +46,6 @@ parameterized:
       base-url: http://localhost:8080/skills
   flag:
     webclient-builder-debug: true
+  pagination:
+    default-page: 0
+    default-size: 10

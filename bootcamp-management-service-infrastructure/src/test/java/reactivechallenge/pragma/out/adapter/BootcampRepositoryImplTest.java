@@ -55,13 +55,14 @@ class BootcampRepositoryImplTest {
     @DisplayName("Save bootcamp successfully")
     void saveBootcampSuccess() {
         // Arrange
+        LocalDateTime fecha = LocalDateTime.parse("2026-02-17T10:30:00");
         List<Long> skillsIds = List.of(1L);
         BootcampModel bootcampModelToBeSaved = new BootcampModel(null,"name", "description"
         , LocalDateTime.now().plusHours(1L), Duration.ofHours(2L), skillsIds);
         BootcampModel bootcampModelSaved = new BootcampModel(1L, "name",  "description"
-                , LocalDateTime.now(), Duration.ofHours(2L), skillsIds);
+                , fecha, Duration.ofHours(2L), skillsIds);
         BootcampEntity bootcampEntitySaved = new BootcampEntity(1L, "name", "description"
-        , LocalDateTime.now(),2L,3);
+        , fecha,2L,3);
         List<BootcampSkillEntity> bootcampSkillEntityList = List.of(
           new BootcampSkillEntity(1L,1L)
         );
