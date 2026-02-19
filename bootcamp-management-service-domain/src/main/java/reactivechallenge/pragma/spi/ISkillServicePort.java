@@ -9,4 +9,5 @@ import java.util.List;
 public interface ISkillServicePort {
     Mono<Boolean> existsById(List<String> skillIds);
     Flux<SkillExternalModel> getSkillsByIds (List<String> skillIds);
+    Mono<Void> deleteSkillById(String skillId);
 }

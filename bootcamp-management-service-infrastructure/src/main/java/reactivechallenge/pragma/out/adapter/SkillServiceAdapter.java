@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactivechallenge.pragma.exception.ExceptionDelete;
 import reactivechallenge.pragma.exception.InconsistencyDataException;
 import reactivechallenge.pragma.model.SkillExternalModel;
 import reactivechallenge.pragma.spi.ISkillServicePort;
@@ -66,6 +67,22 @@ public class SkillServiceAdapter implements ISkillServicePort {
                             , skillIdsAsString, e.getMessage());
 
                     return  Flux.empty();
+                });
+    }
+
+    @Override
+    public Mono<Void> deleteSkillById(String skillId) {
+        return webClient.delete()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/deleteByIds")
+                        .queryParam("skillIds", skillId)
+                        .build())
+                .retrieve()
+                .bodyToMono(Void.class)
+                .timeout(Duration.ofSeconds(5))
+                .onErrorResume(e -> {
+                    log.error("Error al eliminar la capacidad con id {}: {}.", skillId, e.getMessage());
+                    return  Mono.error(new ExceptionDelete(String.format("Error al eliminar la capacidad con id %s",skillId), e));
                 });
     }
 }

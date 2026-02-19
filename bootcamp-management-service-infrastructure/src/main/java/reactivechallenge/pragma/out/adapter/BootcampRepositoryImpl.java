@@ -75,6 +75,29 @@ public class BootcampRepositoryImpl implements IBootcampRepositoryPort {
         return bootcampRepository.count();
     }
 
+    @Override
+    public Mono<Void> deleteBootcampsByIds(List<Long> ids) {
+        return bootcampRepository.deleteAllById(ids)
+                .onErrorMap(databaseErrorMapper::map);
+    }
+
+    @Override
+    public Flux<Long> getSkillsIdsByBootcampId(Long bootcampId) {
+        return bootcampSkillRepository.findAllByBootcampId(bootcampId)
+                .map(BootcampSkillEntity::skillId);
+    }
+
+    @Override
+    public Mono<Void> deleteBootcampSkillRelation(Long bootcampId) {
+        return bootcampSkillRepository.deleteByBootcampId(bootcampId)
+                .onErrorMap(databaseErrorMapper::map);
+    }
+
+    @Override
+    public Mono<Long> getTotalSkillRelationWithBootcamps(Long skillId) {
+        return bootcampSkillRepository.countBySkillId(skillId);
+    }
+
     private Mono<BootcampModel> saveBootcampSkillRelation(BootcampModel bootcampModel) {
         List<Long> skillsIds = bootcampModel.skillsIds();
 

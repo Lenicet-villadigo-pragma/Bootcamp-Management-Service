@@ -102,10 +102,42 @@ public class BootcampRouter {
 
                     })
             )
+            ,@RouterOperation(
+            path = "/deleteByIds",
+            produces = {
+                    MediaType.APPLICATION_JSON_VALUE
+            },
+            method = RequestMethod.DELETE,
+            beanClass = BootcampHandler.class,
+            beanMethod = "deleteBootcampsByIds",
+            operation = @Operation(
+                    operationId = "deleteBootcampsByIds",
+                    summary = "Eliminar bootcamps por id",
+                    description = "Se eliminan los bootcamps con sus respectivas capacidades.",
+                    tags = {"Gestión de Bootcamps"},
+                    responses = {
+                            @ApiResponse(
+                                    responseCode = "200",
+                                    description = "Ok",
+                                    content = @Content(schema = @Schema(implementation = String.class))
+                            ),
+                            @ApiResponse(
+                                    responseCode = "500",
+                                    description = "Error interno"
+                            )
+                    },
+                    parameters = {
+                            @Parameter(in = ParameterIn.QUERY, name = "bootcampsIds",
+                                    schema = @Schema(implementation = Integer.class),
+                                    description = "Id para eliminar bootcamps, se puede enviar varios separados por coma.",
+                                    required = true)
+                    })
+            )
 
     })
     public RouterFunction<ServerResponse> bootcampRoutes(BootcampHandler bootcampHandler) {
         return route(POST("/create").and(accept(MediaType.APPLICATION_JSON)), bootcampHandler::createBootcamp)
-                .andRoute(GET("/retrieve"), bootcampHandler::listBootcamps);
+                .andRoute(GET("/retrieve"), bootcampHandler::listBootcamps)
+                .andRoute(DELETE("/deleteByIds"), bootcampHandler::deleteBootcampsByIds);
     }
 }

@@ -4,8 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.reactive.TransactionalOperator;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactivechallenge.pragma.api.IDeleteBootcampServicePort;
 import reactivechallenge.pragma.api.IRegisterBootcampServicePort;
 import reactivechallenge.pragma.api.IRetrieveBootcampServicePort;
 import reactivechallenge.pragma.input.dto.*;
@@ -15,6 +17,9 @@ import reactivechallenge.pragma.spi.ISkillServicePort;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+import java.util.Optional;
+
 @Component
 @Slf4j
 public class BootcampHandler {
@@ -23,17 +28,22 @@ public class BootcampHandler {
     private final ISkillServicePort skillServicePort;
     private final int defaultPageNumber;
     private final int defaultPageSize;
+    private final IDeleteBootcampServicePort deleteBootcampServicePort;
+    private final TransactionalOperator transactionalOperator;
 
 
     public BootcampHandler(IRegisterBootcampServicePort registerBootcampServicePort
     , IRetrieveBootcampServicePort retrieveBootcampServicePort, ISkillServicePort skillServicePort
     , @Value("${parameterized.pagination.default-page}") int defaultPageNumber
-    , @Value("${parameterized.pagination.default-size}") int defaultPageSize){
+    , @Value("${parameterized.pagination.default-size}") int defaultPageSize
+    , IDeleteBootcampServicePort deleteBootcampServicePort,TransactionalOperator transactionalOperator){
         this.registerBootcampServicePort = registerBootcampServicePort;
         this.retrieveBootcampServicePort = retrieveBootcampServicePort;
         this.skillServicePort = skillServicePort;
         this.defaultPageNumber = defaultPageNumber;
         this.defaultPageSize = defaultPageSize;
+        this.deleteBootcampServicePort = deleteBootcampServicePort;
+        this.transactionalOperator = transactionalOperator;
     }
 
     public Mono<ServerResponse> createBootcamp(ServerRequest request) {
@@ -98,5 +108,16 @@ public class BootcampHandler {
             }
         }
         return number;
+    }
+
+    public Mono<ServerResponse> deleteBootcampsByIds(ServerRequest serverRequest){
+        Optional<String> stringBootcampsIds =  serverRequest.queryParam("bootcampsIds");
+        List<Long> bootcampsIds = deleteBootcampServicePort.verifyBootcampIds(stringBootcampsIds.orElse(null));
+
+        return deleteBootcampServicePort.deleteBootcampsByIds(bootcampsIds)
+                .as(transactionalOperator::transactional)
+                .then(ServerResponse.ok().bodyValue("Bootcamps eliminados"))
+                .doOnError(e -> log.error("Transacción abortada: {}", e.getMessage()))
+                .onErrorComplete();
     }
 }

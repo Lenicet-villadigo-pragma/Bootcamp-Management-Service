@@ -7,8 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.reactive.TransactionalOperator;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactivechallenge.pragma.api.IDeleteBootcampServicePort;
 import reactivechallenge.pragma.api.IRegisterBootcampServicePort;
 import reactivechallenge.pragma.api.IRetrieveBootcampServicePort;
 import reactivechallenge.pragma.input.dto.CreateBootcampRequestDto;
@@ -32,14 +34,19 @@ class BootcampHandlerTest {
     @Mock
     IRetrieveBootcampServicePort retrieveBootcampServicePortMock;
     @Mock
-  ISkillServicePort skillServicePortMock;
+    ISkillServicePort skillServicePortMock;
+    @Mock
+    IDeleteBootcampServicePort deleteBootcampServicePort;
+    @Mock
+    TransactionalOperator transactionalOperator;
 
     private BootcampHandler bootcampHandler;
 
     @BeforeEach
     void setUp() {
         bootcampHandler = new BootcampHandler(registerBootcampServicePortMock, retrieveBootcampServicePortMock,
-                skillServicePortMock,0,10);
+                skillServicePortMock,0,10, deleteBootcampServicePort
+        , transactionalOperator);
     }
 
     @Test
