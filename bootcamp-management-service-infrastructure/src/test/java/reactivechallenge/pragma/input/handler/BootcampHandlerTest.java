@@ -35,8 +35,6 @@ class BootcampHandlerTest {
     @Mock
     IRetrieveBootcampServicePort retrieveBootcampServicePortMock;
     @Mock
-    ISkillServicePort skillServicePortMock;
-    @Mock
     IDeleteBootcampServicePort deleteBootcampServicePort;
     @Mock
     TransactionalOperator transactionalOperator;
@@ -46,7 +44,7 @@ class BootcampHandlerTest {
     @BeforeEach
     void setUp() {
         bootcampHandler = new BootcampHandler(registerBootcampServicePortMock, retrieveBootcampServicePortMock,
-                skillServicePortMock,0,10, deleteBootcampServicePort
+                0,10, deleteBootcampServicePort
         , transactionalOperator);
     }
 
