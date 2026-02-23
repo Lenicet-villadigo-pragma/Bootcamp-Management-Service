@@ -19,7 +19,8 @@ public class UseCaseConfig {
     }
 
     @Bean
-    public IRetrieveBootcampServicePort creatorRetrieveBootcampServicePort(IBootcampRepositoryPort bootcampRepositoryPort){
-        return  new RetrieveBootcampUseCase(bootcampRepositoryPort);
+    public IRetrieveBootcampServicePort creatorRetrieveBootcampServicePort(IBootcampRepositoryPort bootcampRepositoryPort,
+                                                                           ISkillServicePort skillServicePort){
+        return  new RetrieveBootcampUseCase(bootcampRepositoryPort, skillServicePort);
     }
 }

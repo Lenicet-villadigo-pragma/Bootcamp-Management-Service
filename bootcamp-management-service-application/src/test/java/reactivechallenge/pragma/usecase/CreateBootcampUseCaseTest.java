@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactivechallenge.pragma.exception.InconsistencyDataException;
 import reactivechallenge.pragma.model.BootcampModel;
+import reactivechallenge.pragma.model.SkillExternalModel;
 import reactivechallenge.pragma.spi.IBootcampRepositoryPort;
 import reactivechallenge.pragma.spi.ISkillServicePort;
 import reactor.core.publisher.Mono;
@@ -17,6 +18,7 @@ import reactor.test.StepVerifier;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,7 +36,11 @@ class CreateBootcampUseCaseTest {
     @DisplayName("Create technology successfully")
     void createBootcampSuccess() {
         // Arrange
-        List<Long> skillsIds = List.of(1L,2L,3L);
+        List<SkillExternalModel> skillsIds = List.of(
+                new SkillExternalModel(1L,"", new ArrayList<>()),
+                new SkillExternalModel(2L,"", new ArrayList<>()),
+                new SkillExternalModel(3L,"", new ArrayList<>())
+        );
         BootcampModel inputModel = new BootcampModel(null,"name", "description",
                 LocalDateTime.now().plusHours(1), Duration.ofHours(100), skillsIds);
         BootcampModel returnedModel = new BootcampModel(null,"name", "description",
@@ -59,7 +65,11 @@ class CreateBootcampUseCaseTest {
     @DisplayName("Create skill Throw InconsistencyDataException because tech ids does not exists")
     void createBootcampThrowInconsistencyDataException() {
         // Arrange
-        List<Long> skillsIds = List.of(1L,2L,3L);
+        List<SkillExternalModel> skillsIds = List.of(
+                new SkillExternalModel(1L,"", new ArrayList<>()),
+                new SkillExternalModel(2L,"", new ArrayList<>()),
+                new SkillExternalModel(3L,"", new ArrayList<>())
+        );
         BootcampModel inputModel = new BootcampModel(null,"name", "description",
                 LocalDateTime.now().plusHours(1), Duration.ofHours(100), skillsIds);
 
@@ -82,7 +92,11 @@ class CreateBootcampUseCaseTest {
     @DisplayName("Create skill Throw InconsistencyDataException because startDate is invalid")
     void createBootcampFailsBecauseInvalidStartDate() {
         // Arrange
-        List<Long> skillsIds = List.of(1L,2L,3L);
+        List<SkillExternalModel> skillsIds = List.of(
+                new SkillExternalModel(1L,"", new ArrayList<>()),
+                new SkillExternalModel(2L,"", new ArrayList<>()),
+                new SkillExternalModel(3L,"", new ArrayList<>())
+        );
         BootcampModel inputModel = new BootcampModel(null,"name", "description",
                 LocalDateTime.now().minusDays(1), Duration.ofHours(100), skillsIds);
 
