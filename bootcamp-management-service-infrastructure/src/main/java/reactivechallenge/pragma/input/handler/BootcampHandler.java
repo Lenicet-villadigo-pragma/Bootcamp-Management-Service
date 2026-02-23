@@ -25,7 +25,6 @@ import java.util.Optional;
 public class BootcampHandler {
     private final IRegisterBootcampServicePort registerBootcampServicePort;
     private final IRetrieveBootcampServicePort retrieveBootcampServicePort;
-    private final ISkillServicePort skillServicePort;
     private final int defaultPageNumber;
     private final int defaultPageSize;
     private final IDeleteBootcampServicePort deleteBootcampServicePort;
@@ -33,13 +32,12 @@ public class BootcampHandler {
 
 
     public BootcampHandler(IRegisterBootcampServicePort registerBootcampServicePort
-    , IRetrieveBootcampServicePort retrieveBootcampServicePort, ISkillServicePort skillServicePort
+    , IRetrieveBootcampServicePort retrieveBootcampServicePort
     , @Value("${parameterized.pagination.default-page}") int defaultPageNumber
     , @Value("${parameterized.pagination.default-size}") int defaultPageSize
     , IDeleteBootcampServicePort deleteBootcampServicePort,TransactionalOperator transactionalOperator){
         this.registerBootcampServicePort = registerBootcampServicePort;
         this.retrieveBootcampServicePort = retrieveBootcampServicePort;
-        this.skillServicePort = skillServicePort;
         this.defaultPageNumber = defaultPageNumber;
         this.defaultPageSize = defaultPageSize;
         this.deleteBootcampServicePort = deleteBootcampServicePort;
@@ -67,14 +65,7 @@ public class BootcampHandler {
                 .retrieveBootcamps(skillSortField, skillSortOrder, pageNumber, pageSize)
                 .flatMap(paginationResultModel ->
                         Flux.fromIterable(paginationResultModel.items())
-                                .concatMap(bootcampModel ->
-                                        skillServicePort.getSkillsByIds(bootcampModel.getSkillIdsAsString())
-                                                .map(ListAllSkillResponseDto::fromModel)
-                                                .collectList()
-                                                .map(listAllSkillResponseDto ->
-                                                        new ListAllResponseDto(bootcampModel.id(), bootcampModel.name(), listAllSkillResponseDto)
-                                                )
-                                )
+                                .map(ListAllResponseDto::fromModel)
                                 .collectList()
                                 .flatMap(listAllResponseDto ->{
                                     PaginatedDto<ListAllResponseDto> response = new PaginatedDto<>(

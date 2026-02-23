@@ -5,9 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import reactivechallenge.pragma.model.BootcampModel;
+import reactivechallenge.pragma.model.SkillExternalModel;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public record CreateBootcampRequestDto (
@@ -19,6 +21,15 @@ public record CreateBootcampRequestDto (
 ){
     public BootcampModel toModel() {
         return new BootcampModel(null, this.name, this.description, this.startDate
-                , Duration.ofHours(this.estimatedTimeInHours), this.skillsIds);
+                , Duration.ofHours(this.estimatedTimeInHours), getSkillExternalModelList(this.skillsIds));
+    }
+
+    private List<SkillExternalModel> getSkillExternalModelList(List<Long> skillsIds){
+        if(skillsIds==null){
+            return new ArrayList<>();
+        }
+        return skillsIds.stream()
+                .map(skillId -> new SkillExternalModel(skillId, "", new ArrayList<>()))
+                .toList();
     }
 }

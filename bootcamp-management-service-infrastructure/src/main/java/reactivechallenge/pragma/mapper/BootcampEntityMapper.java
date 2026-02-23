@@ -2,6 +2,7 @@ package reactivechallenge.pragma.mapper;
 
 import org.springframework.stereotype.Component;
 import reactivechallenge.pragma.model.BootcampModel;
+import reactivechallenge.pragma.model.SkillExternalModel;
 import reactivechallenge.pragma.out.entity.BootcampEntity;
 
 import java.time.Duration;
@@ -9,7 +10,7 @@ import java.util.List;
 
 @Component
 public class BootcampEntityMapper {
-    public BootcampModel toModel(BootcampEntity entity, List<Long> technologyExternalModelList) {
+    public BootcampModel toModel(BootcampEntity entity, List<SkillExternalModel> skillExternalModelList) {
         if (entity == null) {
             return null;
         }
@@ -19,7 +20,7 @@ public class BootcampEntityMapper {
                 entity.description(),
                 entity.startDay(),
                 Duration.ofHours(entity.estimatedTime()),
-                technologyExternalModelList
+                skillExternalModelList
         );
     }
 
@@ -33,7 +34,7 @@ public class BootcampEntityMapper {
                 model.description(),
                 model.startDate(),
                 model.estimatedTime().toHours(),
-                model.skillsIds().size()
+                model.skillExternalModels().size()
         );
     }
 }

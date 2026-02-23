@@ -15,12 +15,13 @@ import reactivechallenge.pragma.api.IRegisterBootcampServicePort;
 import reactivechallenge.pragma.api.IRetrieveBootcampServicePort;
 import reactivechallenge.pragma.input.dto.CreateBootcampRequestDto;
 import reactivechallenge.pragma.model.BootcampModel;
-import reactivechallenge.pragma.spi.ISkillServicePort;
+import reactivechallenge.pragma.model.SkillExternalModel;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -54,6 +55,7 @@ class BootcampHandlerTest {
     void createBootcampSuccess() {
         // Arrange
         List<Long> skillsIds = List.of(1L);
+        List<SkillExternalModel> skillExternalModelList = List.of(new SkillExternalModel(1L, "", new ArrayList<>()));
         CreateBootcampRequestDto validDto = new CreateBootcampRequestDto("b1", "Valid description",
                 LocalDateTime.now().plusHours(1), 2L, skillsIds);
         ServerRequest request = mock(ServerRequest.class);
@@ -61,7 +63,7 @@ class BootcampHandlerTest {
         given(request.bodyToMono(CreateBootcampRequestDto.class)).willReturn(Mono.just(validDto));
         given(registerBootcampServicePortMock.registerBootcamp(any(BootcampModel.class)))
                 .willReturn(Mono.just(new BootcampModel(1L, "b1", "Valid description",
-                        LocalDateTime.now().plusHours(1), Duration.ofHours(2L), skillsIds)));
+                        LocalDateTime.now().plusHours(1), Duration.ofHours(2L), skillExternalModelList)));
 
         // Act
         Mono<ServerResponse> responseMono = bootcampHandler.createBootcamp(request);

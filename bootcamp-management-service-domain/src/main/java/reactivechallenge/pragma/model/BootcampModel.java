@@ -12,12 +12,12 @@ public record BootcampModel (
     String description,
     LocalDateTime startDate,
     Duration estimatedTime,
-    List<Long> skillsIds
+    List<SkillExternalModel> skillExternalModels
 ){
 
     public BootcampModel{
         validateName(name);
-        validateSkills(skillsIds);
+        validateSkills(skillExternalModels);
         validateStartDay(startDate);
         validateEstimatedTime(estimatedTime);
     }
@@ -29,7 +29,7 @@ public record BootcampModel (
         }
     }
 
-    private void validateSkills(List<Long> skillsIds) {
+    private void validateSkills(List<SkillExternalModel> skillsIds) {
         if (skillsIds == null || skillsIds.isEmpty() || skillsIds.size() > 4) {
             throw new BusinessDomainException("La lista de capacidades no puede ser nula, vacía o " +
                     "contener más de 4.");
@@ -45,7 +45,8 @@ public record BootcampModel (
     }
 
     public List<String> getSkillIdsAsString() {
-        return skillsIds.stream()
+        return skillExternalModels.stream()
+                .map(SkillExternalModel::id)
                 .map(String::valueOf)
                 .toList();
     }

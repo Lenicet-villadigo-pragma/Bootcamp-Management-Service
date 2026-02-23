@@ -10,6 +10,7 @@ import reactivechallenge.pragma.mapper.BootcampEntityMapper;
 import reactivechallenge.pragma.mapper.BootcampSkillEntityMapper;
 import reactivechallenge.pragma.mapper.DatabaseErrorMapper;
 import reactivechallenge.pragma.model.BootcampModel;
+import reactivechallenge.pragma.model.SkillExternalModel;
 import reactivechallenge.pragma.out.entity.BootcampEntity;
 import reactivechallenge.pragma.out.entity.BootcampSkillEntity;
 import reactivechallenge.pragma.out.repository.IBootcampRepository;
@@ -20,6 +21,7 @@ import reactor.test.StepVerifier;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -56,7 +58,7 @@ class BootcampRepositoryImplTest {
     void saveBootcampSuccess() {
         // Arrange
         LocalDateTime fecha = LocalDateTime.parse("2026-02-17T10:30:00");
-        List<Long> skillsIds = List.of(1L);
+        List<SkillExternalModel> skillsIds = List.of(new SkillExternalModel(1L, "", new ArrayList<>()));
         BootcampModel bootcampModelToBeSaved = new BootcampModel(null,"name", "description"
         , LocalDateTime.now().plusHours(1L), Duration.ofHours(2L), skillsIds);
         BootcampModel bootcampModelSaved = new BootcampModel(1L, "name",  "description"

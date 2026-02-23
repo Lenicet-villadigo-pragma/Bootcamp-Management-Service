@@ -46,14 +46,13 @@ public class BootcampRepositoryImpl implements IBootcampRepositoryPort {
     public Mono<BootcampModel> save(BootcampModel bootcampModel) {
         return bootcampRepository.save(bEntityMapper.toEntity(bootcampModel))
                 .flatMap(savedBootcampEntity -> saveBootcampSkillRelation(bEntityMapper.toModel(savedBootcampEntity,
-                        bootcampModel.skillsIds())))
+                        bootcampModel.skillExternalModels())))
                 .onErrorMap(databaseErrorMapper::map);
     }
 
     @Override
     public Flux<BootcampModel> getBootcamps(SortField sortField, SortOrder sortOrder, Integer pageNumber, Integer pageSize) {
-        Sort sort = Sort.by(Sort.Direction.fromString(sortOrder.getName()), sortField.getFieldName());
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Pageable pageable =getPageable(sortField, sortOrder, pageNumber, pageSize);
 
         return bootcampRepository.findAllBy(pageable).concatMap(bootcampEntity ->
                 getSkillsByBootcampId(bootcampEntity.id()).collectList()
@@ -61,13 +60,17 @@ public class BootcampRepositoryImpl implements IBootcampRepositoryPort {
                             if (skillExternalModels.isEmpty()) {
                                 return Mono.error(new BusinessDomainException("Bootcamp sin capacidades"));
                             }
-                            return Mono.just(bEntityMapper.toModel(bootcampEntity, skillExternalModels.stream()
-                                    .map(SkillExternalModel::id).toList()));
+                            return Mono.just(bEntityMapper.toModel(bootcampEntity, skillExternalModels));
                         }).onErrorResume(error -> {
-                            log.warn("Omitiendo skill {} por error: {}", bootcampEntity.id(), error.getMessage());
+                            log.warn("Omitiendo bootcamp {} por error: {}", bootcampEntity.id(), error.getMessage());
                             return Mono.empty();
                         })
         );
+    }
+
+    private Pageable getPageable(SortField sortField, SortOrder sortOrder, Integer pageNumber, Integer pageSize){
+        Sort sort = Sort.by(Sort.Direction.fromString(sortOrder.getName()), sortField.getFieldName());
+        return  PageRequest.of(pageNumber, pageSize, sort);
     }
 
     @Override
@@ -99,9 +102,9 @@ public class BootcampRepositoryImpl implements IBootcampRepositoryPort {
     }
 
     private Mono<BootcampModel> saveBootcampSkillRelation(BootcampModel bootcampModel) {
-        List<Long> skillsIds = bootcampModel.skillsIds();
+        List<Long> skillsIds = bootcampModel.skillExternalModels().stream().map(SkillExternalModel::id).toList();
 
-        if (skillsIds == null || skillsIds.isEmpty()) {
+        if (skillsIds.isEmpty()) {
             return Mono.just(bootcampModel);
         }
 

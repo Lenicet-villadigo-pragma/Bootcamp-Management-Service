@@ -7,6 +7,7 @@ import reactivechallenge.pragma.exception.BusinessDomainException;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 class BootcampModelTest {
@@ -15,7 +16,7 @@ class BootcampModelTest {
     void createBootcampModelSuccessful(){
         // Arrange
         BootcampModel bootcampModel = null;
-        List<Long> skillsIds = List.of(1L);
+        List<SkillExternalModel> skillsIds = List.of(new SkillExternalModel(1L,"", new ArrayList<>()));
 
         // Act
         try {
@@ -34,7 +35,7 @@ class BootcampModelTest {
         // Arrange
         BootcampModel bootcampModel = null;
         BusinessDomainException businessDomainException = null;
-        List<Long> skillsIds = List.of(1L );
+        List<SkillExternalModel> skillsIds = List.of(new SkillExternalModel(1L,"", new ArrayList<>()));
 
         // Act
         try {
@@ -74,7 +75,11 @@ class BootcampModelTest {
     @Test
     void createBootcampModelReturnsSkillsIdsAsString(){
         // Arrange
-        List<Long> skillsIds = List.of(1L,2L,3L);
+        List<SkillExternalModel> skillsIds = List.of(
+                new SkillExternalModel(1L,"", new ArrayList<>()),
+                new SkillExternalModel(2L,"", new ArrayList<>()),
+                new SkillExternalModel(3L,"", new ArrayList<>())
+        );
         BootcampModel bootcampModel = new BootcampModel(null,"name", "description"
                 , LocalDateTime.now().plusHours(1), Duration.ofHours(100), skillsIds);
         List<String> techIds = null;
@@ -98,7 +103,7 @@ class BootcampModelTest {
         // Act
         try {
             bootcampModel = new BootcampModel(null,"name", "description"
-                    , null, Duration.ofHours(100), List.of(1L));
+                    , null, Duration.ofHours(100), List.of(new SkillExternalModel(1L,"", new ArrayList<>())));
         }catch (Exception ex){
             businessDomainException = (BusinessDomainException) ex;
         }
@@ -119,7 +124,7 @@ class BootcampModelTest {
         // Act
         try {
             bootcampModel = new BootcampModel(null,"name", "description"
-                    , LocalDateTime.now().plusHours(1), Duration.ofHours(0), List.of(1L));
+                    , LocalDateTime.now().plusHours(1), Duration.ofHours(0), List.of(new SkillExternalModel(1L,"", new ArrayList<>())));
         }catch (Exception ex){
             businessDomainException = (BusinessDomainException) ex;
         }
