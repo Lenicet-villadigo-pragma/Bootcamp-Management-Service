@@ -17,4 +17,5 @@ public interface IBootcampRepositoryPort {
     Flux<Long> getSkillsIdsByBootcampId(Long bootcampId);
     Mono<Void> deleteBootcampSkillRelation(Long bootcampId);
     Mono<Long> getTotalSkillRelationWithBootcamps(Long skillId);
+    Mono<Boolean> existsById(Long bootcampId);
 }

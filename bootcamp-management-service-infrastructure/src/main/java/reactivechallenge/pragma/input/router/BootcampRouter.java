@@ -19,6 +19,7 @@ import reactivechallenge.pragma.input.dto.CreateBootcampRequestDto;
 import reactivechallenge.pragma.input.dto.CreateBootcampResponseDto;
 import reactivechallenge.pragma.input.dto.ListAllResponseDto;
 import reactivechallenge.pragma.input.handler.BootcampHandler;
+import reactivechallenge.pragma.model.criteria.ExistsResponseDto;
 import reactivechallenge.pragma.model.criteria.SortField;
 import reactivechallenge.pragma.model.criteria.SortOrder;
 
@@ -133,11 +134,40 @@ public class BootcampRouter {
                                     required = true)
                     })
             )
+            ,@RouterOperation(
+                path = "/existsByIds",
+                produces = {
+                    MediaType.APPLICATION_JSON_VALUE
+                },
+                method = RequestMethod.GET,
+                beanClass = BootcampHandler.class,
+                beanMethod = "existsBootcampsByIds",
+                operation = @Operation(
+                    operationId = "existsBootcampsByIds",
+                    summary = "Verificar existencia de bootcamps por ids",
+                    description = "Se verifica si existe el registro y se devuelve true o false por cada id enviado.",
+                    tags = {"Gestión de Bootcamps"},
+                    responses = {
+                            @ApiResponse(
+                                    responseCode = "200",
+                                    description = "Ok",
+                                    content = @Content(schema = @Schema(implementation = ExistsResponseDto.class))
+                            )
+                    },
+                    parameters = {
+                            @Parameter(in = ParameterIn.QUERY, name = "bootcampsIds",
+                                    schema = @Schema(implementation = String.class),
+                                    description = "Id para verificar existencia de bootcamps, se puede enviar varios separados por coma.",
+                                    required = true)
+                    }
+                )
+            )
 
     })
     public RouterFunction<ServerResponse> bootcampRoutes(BootcampHandler bootcampHandler) {
         return route(POST("/create").and(accept(MediaType.APPLICATION_JSON)), bootcampHandler::createBootcamp)
                 .andRoute(GET("/retrieve"), bootcampHandler::listBootcamps)
-                .andRoute(DELETE("/deleteByIds"), bootcampHandler::deleteBootcampsByIds);
+                .andRoute(DELETE("/deleteByIds"), bootcampHandler::deleteBootcampsByIds)
+                .andRoute(GET("/existsByIds"), bootcampHandler::existsBootcampsByIds);
     }
 }

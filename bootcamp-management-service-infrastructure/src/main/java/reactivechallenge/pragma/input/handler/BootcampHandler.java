@@ -102,13 +102,28 @@ public class BootcampHandler {
     }
 
     public Mono<ServerResponse> deleteBootcampsByIds(ServerRequest serverRequest){
-        Optional<String> stringBootcampsIds =  serverRequest.queryParam("bootcampsIds");
-        List<Long> bootcampsIds = deleteBootcampServicePort.verifyBootcampIds(stringBootcampsIds.orElse(null));
+        List<Long> bootcampsIds =getIdsFromString(serverRequest);
 
         return deleteBootcampServicePort.deleteBootcampsByIds(bootcampsIds)
                 .as(transactionalOperator::transactional)
                 .then(ServerResponse.ok().bodyValue("Bootcamps eliminados"))
                 .doOnError(e -> log.error("Transacción abortada: {}", e.getMessage()))
                 .onErrorComplete();
+    }
+
+    public Mono<ServerResponse> existsBootcampsByIds(ServerRequest serverRequest){
+        List<Long> bootcampsIds = getIdsFromString(serverRequest);
+
+        return retrieveBootcampServicePort.existsBootcampsByIds(bootcampsIds)
+                .collectList()
+                .flatMap(existsResponseDtoList -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_NDJSON)
+                        .bodyValue(existsResponseDtoList))
+                    .onErrorComplete();
+    }
+
+    private List<Long> getIdsFromString(ServerRequest serverRequest){
+        Optional<String> stringBootcampsIds =  serverRequest.queryParam("bootcampsIds");
+        return deleteBootcampServicePort.verifyBootcampIds(stringBootcampsIds.orElse(null));
     }
 }

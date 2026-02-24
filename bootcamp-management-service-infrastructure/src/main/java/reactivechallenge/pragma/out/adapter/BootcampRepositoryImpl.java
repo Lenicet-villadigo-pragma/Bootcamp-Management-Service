@@ -101,6 +101,11 @@ public class BootcampRepositoryImpl implements IBootcampRepositoryPort {
         return bootcampSkillRepository.countBySkillId(skillId);
     }
 
+    @Override
+    public Mono<Boolean> existsById(Long bootcampId) {
+        return bootcampRepository.existsById(bootcampId);
+    }
+
     private Mono<BootcampModel> saveBootcampSkillRelation(BootcampModel bootcampModel) {
         List<Long> skillsIds = bootcampModel.skillExternalModels().stream().map(SkillExternalModel::id).toList();
 
