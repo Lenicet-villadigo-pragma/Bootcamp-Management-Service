@@ -15,11 +15,11 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactivechallenge.pragma.input.dto.BootcampDto;
 import reactivechallenge.pragma.input.dto.CreateBootcampRequestDto;
 import reactivechallenge.pragma.input.dto.CreateBootcampResponseDto;
 import reactivechallenge.pragma.input.dto.ListAllResponseDto;
 import reactivechallenge.pragma.input.handler.BootcampHandler;
-import reactivechallenge.pragma.model.criteria.ExistsResponseDto;
 import reactivechallenge.pragma.model.criteria.SortField;
 import reactivechallenge.pragma.model.criteria.SortOrder;
 
@@ -135,29 +135,29 @@ public class BootcampRouter {
                     })
             )
             ,@RouterOperation(
-                path = "/existsByIds",
+                path = "/getByIds",
                 produces = {
                     MediaType.APPLICATION_JSON_VALUE
                 },
                 method = RequestMethod.GET,
                 beanClass = BootcampHandler.class,
-                beanMethod = "existsBootcampsByIds",
+                beanMethod = "getBootcampsByIds",
                 operation = @Operation(
-                    operationId = "existsBootcampsByIds",
-                    summary = "Verificar existencia de bootcamps por ids",
-                    description = "Se verifica si existe el registro y se devuelve true o false por cada id enviado.",
+                    operationId = "getBootcampsByIds",
+                    summary = "Obtiene bootcamps por ids",
+                    description = "devuelve los bootcamps encontrados.",
                     tags = {"Gestión de Bootcamps"},
                     responses = {
                             @ApiResponse(
                                     responseCode = "200",
                                     description = "Ok",
-                                    content = @Content(schema = @Schema(implementation = ExistsResponseDto.class))
+                                    content = @Content(schema = @Schema(implementation = BootcampDto.class))
                             )
                     },
                     parameters = {
                             @Parameter(in = ParameterIn.QUERY, name = "bootcampsIds",
                                     schema = @Schema(implementation = String.class),
-                                    description = "Id para verificar existencia de bootcamps, se puede enviar varios separados por coma.",
+                                    description = "Ids de bootcamps, se puede enviar varios separados por coma.",
                                     required = true)
                     }
                 )
@@ -168,6 +168,6 @@ public class BootcampRouter {
         return route(POST("/create").and(accept(MediaType.APPLICATION_JSON)), bootcampHandler::createBootcamp)
                 .andRoute(GET("/retrieve"), bootcampHandler::listBootcamps)
                 .andRoute(DELETE("/deleteByIds"), bootcampHandler::deleteBootcampsByIds)
-                .andRoute(GET("/existsByIds"), bootcampHandler::existsBootcampsByIds);
+                .andRoute(GET("/getByIds"), bootcampHandler::getBootcampsByIds);
     }
 }

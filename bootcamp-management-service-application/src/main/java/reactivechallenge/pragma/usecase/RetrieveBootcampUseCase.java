@@ -3,7 +3,6 @@ package reactivechallenge.pragma.usecase;
 import lombok.extern.slf4j.Slf4j;
 import reactivechallenge.pragma.api.IRetrieveBootcampServicePort;
 import reactivechallenge.pragma.model.BootcampModel;
-import reactivechallenge.pragma.model.criteria.ExistsResponseDto;
 import reactivechallenge.pragma.model.criteria.PaginationResult;
 import reactivechallenge.pragma.model.criteria.SortField;
 import reactivechallenge.pragma.model.criteria.SortOrder;
@@ -45,17 +44,12 @@ public class RetrieveBootcampUseCase implements IRetrieveBootcampServicePort {
     }
 
     @Override
-    public Flux<ExistsResponseDto> existsBootcampsByIds(List<Long> bootcampIds) {
+    public Flux<BootcampModel> getBootcampsByIds(List<Long> bootcampIds) {
         if(bootcampIds==null){
-            return Flux.just(new ExistsResponseDto(0,false, "no ids provided"));
+            return Flux.empty();
         }
 
-        return Flux.fromIterable(bootcampIds)
-                .flatMap(bootcampId ->
-                        bootcampRepositoryPort.existsById(bootcampId)
-                        .map(exists -> new ExistsResponseDto(bootcampId, exists, Boolean.TRUE.equals(exists) ? "bootcamp exists" : "bootcamp does not exist"))
-                                .doOnError(e -> log.error("el id {} no se pudo comprobar, error: {}", bootcampId, e.getMessage()))
-                                .onErrorResume(e -> Mono.just(new ExistsResponseDto(bootcampId, false, "error checking bootcamp existence: " + e.getMessage())))
-                );
+        return bootcampRepositoryPort.getBootcampsByIds(bootcampIds)
+                .onErrorComplete();
     }
 }

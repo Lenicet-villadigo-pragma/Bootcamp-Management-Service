@@ -110,14 +110,15 @@ public class BootcampHandler {
                 .onErrorComplete();
     }
 
-    public Mono<ServerResponse> existsBootcampsByIds(ServerRequest serverRequest){
+    public Mono<ServerResponse> getBootcampsByIds(ServerRequest serverRequest){
         List<Long> bootcampsIds = getIdsFromString(serverRequest);
 
-        return retrieveBootcampServicePort.existsBootcampsByIds(bootcampsIds)
+        return retrieveBootcampServicePort.getBootcampsByIds(bootcampsIds)
+                .map(BootcampDto::fromModel)
                 .collectList()
-                .flatMap(existsResponseDtoList -> ServerResponse.ok()
+                .flatMap(bootcampModels -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_NDJSON)
-                        .bodyValue(existsResponseDtoList))
+                        .bodyValue(bootcampModels))
                     .onErrorComplete();
     }
 

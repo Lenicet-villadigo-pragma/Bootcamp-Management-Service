@@ -102,8 +102,21 @@ public class BootcampRepositoryImpl implements IBootcampRepositoryPort {
     }
 
     @Override
-    public Mono<Boolean> existsById(Long bootcampId) {
-        return bootcampRepository.existsById(bootcampId);
+    public Flux<BootcampModel> getBootcampsByIds(List<Long> bootcampIds) {
+        return bootcampRepository.findAllById(bootcampIds)
+                .flatMap(bootcampEntity ->
+                getSkillsByBootcampId(bootcampEntity.id())
+                        .collectList()
+                        .flatMap(skillExternalModels ->{
+                            if (skillExternalModels.isEmpty()) {
+                                return Mono.empty();
+                            }
+                            return Mono.just(bEntityMapper.toModel(bootcampEntity, skillExternalModels));
+                        }).onErrorResume(error -> {
+                            log.warn("Bootcamp {} no encontrado, error: {}", bootcampEntity.id(), error.getMessage());
+                            return Mono.empty();
+                        })
+        );
     }
 
     private Mono<BootcampModel> saveBootcampSkillRelation(BootcampModel bootcampModel) {
