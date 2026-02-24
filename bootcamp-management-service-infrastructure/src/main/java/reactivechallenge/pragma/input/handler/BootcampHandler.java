@@ -13,7 +13,6 @@ import reactivechallenge.pragma.api.IRetrieveBootcampServicePort;
 import reactivechallenge.pragma.input.dto.*;
 import reactivechallenge.pragma.model.criteria.SortField;
 import reactivechallenge.pragma.model.criteria.SortOrder;
-import reactivechallenge.pragma.spi.ISkillServicePort;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
