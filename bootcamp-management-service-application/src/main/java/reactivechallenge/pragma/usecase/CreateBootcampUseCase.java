@@ -5,6 +5,7 @@ import reactivechallenge.pragma.api.IRegisterBootcampServicePort;
 import reactivechallenge.pragma.exception.BusinessDomainException;
 import reactivechallenge.pragma.exception.InconsistencyDataException;
 import reactivechallenge.pragma.model.BootcampModel;
+import reactivechallenge.pragma.model.SkillExternalModel;
 import reactivechallenge.pragma.spi.IBootcampRepositoryPort;
 import reactivechallenge.pragma.spi.ISkillServicePort;
 import reactor.core.publisher.Mono;
@@ -48,13 +49,14 @@ public class CreateBootcampUseCase implements IRegisterBootcampServicePort {
         if (bootcampModel.name() == null || bootcampModel.name().trim().isEmpty()) {
             return Mono.error(new BusinessDomainException("El nombre del bootcamp no puede estar vacío"));
         }
-        if (bootcampModel.skillsIds() == null || bootcampModel.skillsIds().isEmpty() || bootcampModel.skillsIds().size() > 4) {
+        if (bootcampModel.skillExternalModels() == null || bootcampModel.skillExternalModels().isEmpty() || bootcampModel.skillExternalModels().size() > 4) {
             return Mono.error(new BusinessDomainException("La lista de capacidades no puede ser nula, vacía o contener más de 4."));
         }
-        long uniqueSkillsCount = bootcampModel.skillsIds().stream()
+        long uniqueSkillsCount = bootcampModel.skillExternalModels().stream()
+                .map(SkillExternalModel::id)
                 .distinct()
                 .count();
-        if (uniqueSkillsCount < bootcampModel.skillsIds().size()) {
+        if (uniqueSkillsCount < bootcampModel.skillExternalModels().size()) {
             return Mono.error(new BusinessDomainException("La lista de capacidades no puede contener elementos duplicados"));
         }
         if(bootcampModel.startDate()==null || bootcampModel.startDate().isBefore(LocalDateTime.now())) {
