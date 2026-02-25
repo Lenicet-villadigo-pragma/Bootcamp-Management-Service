@@ -36,9 +36,6 @@ public class CreateBootcampUseCase implements IRegisterBootcampServicePort {
                                     ));
                                 }
 
-                                if(bootcampModel.startDate()==null || bootcampModel.startDate().isBefore(LocalDateTime.now())) {
-                                  return Mono.error(new InconsistencyDataException("Debe ingresar una fecha de inicio válida."));
-                                }
                                 return bootcampRepository.save(bootcampModel);
                             })
                 );
